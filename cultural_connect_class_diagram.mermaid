@@ -1,0 +1,286 @@
+classDiagram
+    class User {
+        +id: string
+        +email: string
+        +password_hash: string
+        +is_american: boolean
+        +nationality: string
+        +gender: string
+        +orientation: string
+        +relationship_goal: string
+        +zip_code: string
+        +subscription_status: string
+        +subscription_end_date: Date
+        +created_at: Date
+        +updated_at: Date
+        +is_verified: boolean
+        +is_active: boolean
+        +last_active: Date
+        +__init__(email: string, password: string)
+        +verify_password(password: string): boolean
+        +update_profile(data: object): boolean
+        +get_matches(): Match[]
+        +get_messages(): Message[]
+        +subscribe(plan: string): boolean
+        +cancel_subscription(): boolean
+    }
+
+    class Profile {
+        +id: string
+        +user_id: string
+        +bio: string
+        +cultural_journey: string
+        +age: number
+        +height: number
+        +education: string
+        +occupation: string
+        +languages: string[]
+        +interests: string[]
+        +photos: Photo[]
+        +location_lat: number
+        +location_lng: number
+        +interested_in_events: boolean
+        +interested_in_immigration: boolean
+        +interested_in_culture: boolean
+        +created_at: Date
+        +updated_at: Date
+        +__init__(user_id: string)
+        +add_photo(photo: Photo): boolean
+        +update_bio(bio: string): boolean
+        +update_cultural_journey(journey: string): boolean
+        +get_compatibility_score(other_profile: Profile): number
+        +is_complete(): boolean
+    }
+
+    class Photo {
+        +id: string
+        +profile_id: string
+        +url: string
+        +is_primary: boolean
+        +is_verified: boolean
+        +upload_date: Date
+        +file_size: number
+        +file_type: string
+        +__init__(profile_id: string, file: File)
+        +verify(): boolean
+        +delete(): boolean
+        +set_as_primary(): boolean
+    }
+
+    class Match {
+        +id: string
+        +user1_id: string
+        +user2_id: string
+        +status: string
+        +compatibility_score: number
+        +matched_at: Date
+        +last_interaction: Date
+        +is_mutual: boolean
+        +__init__(user1_id: string, user2_id: string)
+        +accept(): boolean
+        +reject(): boolean
+        +get_conversation(): Conversation
+        +calculate_compatibility(): number
+        +is_active(): boolean
+    }
+
+    class Message {
+        +id: string
+        +conversation_id: string
+        +sender_id: string
+        +content: string
+        +message_type: string
+        +sent_at: Date
+        +read_at: Date
+        +is_read: boolean
+        +is_deleted: boolean
+        +__init__(conversation_id: string, sender_id: string, content: string)
+        +mark_as_read(): boolean
+        +delete(): boolean
+        +get_ai_suggestions(): string[]
+    }
+
+    class Conversation {
+        +id: string
+        +match_id: string
+        +created_at: Date
+        +last_message_at: Date
+        +is_active: boolean
+        +participant1_id: string
+        +participant2_id: string
+        +__init__(match_id: string)
+        +send_message(sender_id: string, content: string): Message
+        +get_messages(limit: number, offset: number): Message[]
+        +mark_all_read(user_id: string): boolean
+        +get_ai_conversation_starters(): string[]
+    }
+
+    class Event {
+        +id: string
+        +title: string
+        +description: string
+        +cultural_theme: string
+        +date: Date
+        +location: string
+        +address: string
+        +max_attendees: number
+        +current_attendees: number
+        +price: number
+        +organizer_id: string
+        +is_active: boolean
+        +created_at: Date
+        +__init__(title: string, organizer_id: string)
+        +add_attendee(user_id: string): boolean
+        +remove_attendee(user_id: string): boolean
+        +get_attendees(): User[]
+        +is_full(): boolean
+        +cancel(): boolean
+    }
+
+    class EventAttendance {
+        +id: string
+        +event_id: string
+        +user_id: string
+        +status: string
+        +registered_at: Date
+        +attended: boolean
+        +__init__(event_id: string, user_id: string)
+        +confirm_attendance(): boolean
+        +cancel_registration(): boolean
+    }
+
+    class Payment {
+        +id: string
+        +user_id: string
+        +stripe_payment_id: string
+        +amount: number
+        +currency: string
+        +status: string
+        +subscription_id: string
+        +created_at: Date
+        +processed_at: Date
+        +__init__(user_id: string, amount: number)
+        +process(): boolean
+        +refund(): boolean
+        +get_receipt(): object
+    }
+
+    class Subscription {
+        +id: string
+        +user_id: string
+        +stripe_subscription_id: string
+        +plan_type: string
+        +status: string
+        +current_period_start: Date
+        +current_period_end: Date
+        +cancel_at_period_end: boolean
+        +created_at: Date
+        +__init__(user_id: string, plan_type: string)
+        +activate(): boolean
+        +cancel(): boolean
+        +renew(): boolean
+        +is_active(): boolean
+    }
+
+    class FeedPost {
+        +id: string
+        +author_id: string
+        +content: string
+        +post_type: string
+        +cultural_tag: string
+        +likes_count: number
+        +comments_count: number
+        +is_sponsored: boolean
+        +created_at: Date
+        +updated_at: Date
+        +__init__(author_id: string, content: string)
+        +like(user_id: string): boolean
+        +comment(user_id: string, content: string): Comment
+        +delete(): boolean
+        +get_comments(): Comment[]
+    }
+
+    class Comment {
+        +id: string
+        +post_id: string
+        +author_id: string
+        +content: string
+        +created_at: Date
+        +__init__(post_id: string, author_id: string, content: string)
+        +delete(): boolean
+        +edit(content: string): boolean
+    }
+
+    class MatchingAlgorithm {
+        +calculate_compatibility(user1: User, user2: User): number
+        +get_potential_matches(user: User, limit: number): User[]
+        +apply_cultural_filters(users: User[], preferences: object): User[]
+        +calculate_distance(user1: User, user2: User): number
+        +get_ai_insights(user1: User, user2: User): object
+    }
+
+    class AIService {
+        +generate_conversation_starters(user1: Profile, user2: Profile): string[]
+        +analyze_cultural_compatibility(user1: Profile, user2: Profile): object
+        +moderate_content(content: string): boolean
+        +translate_message(message: string, target_language: string): string
+        +generate_profile_suggestions(profile: Profile): string[]
+    }
+
+    class NotificationService {
+        +send_match_notification(user: User, match: Match): boolean
+        +send_message_notification(user: User, message: Message): boolean
+        +send_event_reminder(user: User, event: Event): boolean
+        +send_subscription_reminder(user: User): boolean
+        +send_push_notification(user: User, content: string): boolean
+    }
+
+    class AuthService {
+        +register(email: string, password: string): User
+        +login(email: string, password: string): string
+        +verify_token(token: string): User
+        +refresh_token(token: string): string
+        +logout(token: string): boolean
+        +reset_password(email: string): boolean
+    }
+
+    class PaymentService {
+        +create_subscription(user: User, plan: string): Subscription
+        +process_payment(user: User, amount: number): Payment
+        +cancel_subscription(subscription: Subscription): boolean
+        +handle_webhook(event: object): boolean
+        +get_billing_history(user: User): Payment[]
+    }
+
+    class FileUploadService {
+        +upload_photo(file: File, profile_id: string): Photo
+        +delete_photo(photo: Photo): boolean
+        +resize_image(file: File, dimensions: object): File
+        +verify_image(file: File): boolean
+        +generate_thumbnail(photo: Photo): string
+    }
+
+    %% Relationships
+    User ||--|| Profile : has
+    Profile ||--o{ Photo : contains
+    User ||--o{ Match : participates_in
+    Match ||--|| Conversation : creates
+    Conversation ||--o{ Message : contains
+    User ||--o{ EventAttendance : registers_for
+    Event ||--o{ EventAttendance : has
+    User ||--|| Subscription : has
+    User ||--o{ Payment : makes
+    User ||--o{ FeedPost : creates
+    FeedPost ||--o{ Comment : has
+    User ||--o{ Comment : writes
+    
+    %% Service Dependencies
+    MatchingAlgorithm ..> User : uses
+    MatchingAlgorithm ..> Profile : analyzes
+    AIService ..> Profile : processes
+    AIService ..> Message : enhances
+    NotificationService ..> User : notifies
+    AuthService ..> User : manages
+    PaymentService ..> Subscription : handles
+    PaymentService ..> Payment : processes
+    FileUploadService ..> Photo : manages

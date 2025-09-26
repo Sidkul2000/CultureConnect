@@ -1,0 +1,175 @@
+sequenceDiagram
+    participant U as User
+    participant F as Frontend
+    participant A as AuthService
+    participant API as Backend API
+    participant DB as Database
+    participant P as PaymentService
+    participant M as MatchingAlgorithm
+    participant AI as AIService
+    participant N as NotificationService
+    participant S as SocketIO
+
+    %% User Registration Flow
+    Note over U,S: User Registration and Profile Creation
+    U->>F: Access registration page
+    F->>U: Display registration form
+    U->>F: Submit registration data
+    F->>A: register(email, password, user_data)
+    A->>DB: INSERT INTO users
+    DB-->>A: user_id
+    A->>DB: INSERT INTO profiles
+    DB-->>A: profile_id
+    A-->>F: registration_success + jwt_token
+    F->>P: create_subscription(user_id, plan_type)
+    P->>DB: INSERT INTO subscriptions
+    P-->>F: subscription_created
+    F-->>U: Registration complete, redirect to profile
+
+    %% Profile Setup Flow
+    Note over U,S: Profile Completion and Photo Upload
+    U->>F: Complete profile form
+    F->>API: updateProfile(profile_data)
+    API->>DB: UPDATE profiles SET bio, cultural_journey, interests
+    DB-->>API: profile_updated
+    U->>F: Upload photos
+    F->>API: uploadPhoto(file, profile_id)
+    API->>DB: INSERT INTO photos
+    DB-->>API: photo_id
+    API-->>F: photo_uploaded
+    F-->>U: Profile setup complete
+
+    %% Matching Flow
+    Note over U,S: Discovery and Matching Process
+    U->>F: Access discovery page
+    F->>API: getPotentialMatches(user_id, filters)
+    API->>M: get_potential_matches(user, limit)
+    M->>DB: SELECT users, profiles with compatibility logic
+    DB-->>M: potential_matches[]
+    M->>AI: analyze_cultural_compatibility(user, matches)
+    AI-->>M: compatibility_scores[]
+    M-->>API: ranked_matches[]
+    API-->>F: matches_data
+    F-->>U: Display match cards
+
+    U->>F: Like/Pass on match
+    F->>API: createMatch(user_id, target_user_id, action)
+    API->>DB: INSERT INTO matches
+    DB-->>API: match_created
+    
+    alt Mutual Match
+        API->>DB: UPDATE matches SET is_mutual = true
+        API->>DB: INSERT INTO conversations
+        DB-->>API: conversation_id
+        API->>N: send_match_notification(both_users)
+        N-->>API: notifications_sent
+    end
+    
+    API-->>F: match_result
+    F-->>U: Show match result
+
+    %% Messaging Flow
+    Note over U,S: Real-time Messaging
+    U->>F: Open conversation
+    F->>S: join_room(conversation_id)
+    S-->>F: room_joined
+    F->>API: getMessages(conversation_id)
+    API->>DB: SELECT messages WHERE conversation_id
+    DB-->>API: messages[]
+    API-->>F: conversation_history
+    F-->>U: Display messages
+
+    U->>F: Request AI conversation starters
+    F->>API: getConversationStarters(conversation_id)
+    API->>AI: generate_conversation_starters(user1_profile, user2_profile)
+    AI-->>API: conversation_starters[]
+    API-->>F: ai_suggestions
+    F-->>U: Display suggestions
+
+    U->>F: Send message
+    F->>S: send_message(conversation_id, content)
+    S->>API: saveMessage(message_data)
+    API->>DB: INSERT INTO messages
+    DB-->>API: message_saved
+    S->>F: message_received (to recipient)
+    F-->>U: Message delivered
+    API->>N: send_message_notification(recipient)
+    N-->>API: notification_sent
+
+    %% Event Management Flow
+    Note over U,S: Event Discovery and Registration
+    U->>F: Browse events
+    F->>API: getEvents(location, cultural_theme)
+    API->>DB: SELECT events WHERE location AND theme
+    DB-->>API: events[]
+    API-->>F: events_data
+    F-->>U: Display events
+
+    U->>F: Register for event
+    F->>API: registerForEvent(user_id, event_id)
+    API->>DB: INSERT INTO event_attendance
+    DB-->>API: registration_created
+    API->>DB: UPDATE events SET current_attendees + 1
+    DB-->>API: event_updated
+    API->>N: send_event_confirmation(user)
+    N-->>API: confirmation_sent
+    API-->>F: registration_success
+    F-->>U: Registration confirmed
+
+    %% Payment Flow
+    Note over U,S: Subscription Management
+    U->>F: Upgrade subscription
+    F->>P: create_subscription(user_id, plan_type)
+    P->>DB: INSERT INTO payments
+    P->>DB: UPDATE subscriptions
+    DB-->>P: payment_processed
+    P-->>F: subscription_updated
+    F-->>U: Subscription active
+
+    %% Feed and Content Flow
+    Note over U,S: Social Feed Interaction
+    U->>F: View feed
+    F->>API: getFeedPosts(user_id, filters)
+    API->>DB: SELECT posts, events, news WHERE relevant
+    DB-->>API: feed_items[]
+    API-->>F: feed_data
+    F-->>U: Display feed
+
+    U->>F: Create post
+    F->>API: createPost(user_id, content, cultural_tag)
+    API->>AI: moderate_content(content)
+    AI-->>API: content_approved
+    API->>DB: INSERT INTO feed_posts
+    DB-->>API: post_created
+    API-->>F: post_published
+    F-->>U: Post shared
+
+    %% User Verification Flow
+    Note over U,S: Identity Verification
+    U->>F: Start verification process
+    F->>API: initiateVerification(user_id)
+    API->>DB: UPDATE users SET verification_status = 'pending'
+    DB-->>API: status_updated
+    U->>F: Upload verification documents
+    F->>API: uploadVerificationDocs(user_id, documents)
+    API->>AI: verify_documents(documents)
+    AI-->>API: verification_result
+    
+    alt Verification Approved
+        API->>DB: UPDATE users SET is_verified = true
+        API->>N: send_verification_success(user)
+    else Verification Rejected
+        API->>DB: UPDATE users SET verification_status = 'rejected'
+        API->>N: send_verification_failure(user)
+    end
+    
+    API-->>F: verification_complete
+    F-->>U: Verification result
+
+    %% Error Handling and Cleanup
+    Note over U,S: System Maintenance
+    API->>DB: Cleanup expired sessions
+    API->>DB: Archive old messages
+    API->>N: Send subscription renewal reminders
+    API->>M: Update compatibility algorithms
+    M->>AI: Retrain matching models
