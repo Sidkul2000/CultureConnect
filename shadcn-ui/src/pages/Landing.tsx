@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Heart, Globe, MessageSquare, Calendar, Shield, Zap, Check, Star } from 'lucide-react';
+import { Heart, Globe, MessageSquare, Calendar, Shield, Zap, Check, Star, Users, Sparkles, MapPin, Coffee } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Landing() {
@@ -9,89 +9,103 @@ export default function Landing() {
 
   const features = [
     {
-      icon: <Globe className="h-8 w-8 text-blue-600" />,
-      title: "Cross-Cultural Matching",
-      description: "Connect Americans with non-Americans for meaningful cultural exchange and relationships"
+      icon: <Users className="h-8 w-8 text-yellow-500" />,
+      title: "Meet People",
+      description: "Connect with amazing individuals from different cultures and backgrounds for meaningful relationships",
+      gradient: "from-yellow-400 to-orange-500"
     },
     {
-      icon: <MessageSquare className="h-8 w-8 text-green-600" />,
-      title: "AI Conversation Starters",
-      description: "Smart suggestions based on cultural compatibility to break the ice naturally"
+      icon: <Coffee className="h-8 w-8 text-pink-500" />,
+      title: "Join Groups",
+      description: "Find your tribe in cultural interest groups, hobby circles, and local community gatherings",
+      gradient: "from-pink-400 to-rose-500"
     },
     {
-      icon: <Calendar className="h-8 w-8 text-purple-600" />,
-      title: "Cultural Events",
-      description: "Join themed events like Brazilian Carnival, Oktoberfest, and Holi celebrations"
+      icon: <Calendar className="h-8 w-8 text-purple-500" />,
+      title: "Attend Events",
+      description: "Experience festivals, food tours, language exchanges, and cultural celebrations together",
+      gradient: "from-purple-400 to-indigo-500"
     },
     {
-      icon: <Shield className="h-8 w-8 text-red-600" />,
-      title: "Premium & Secure",
-      description: "Professional platform with verified profiles and serious relationship focus"
+      icon: <Globe className="h-8 w-8 text-blue-500" />,
+      title: "Cultural Exchange",
+      description: "Share your heritage while learning about others in a warm, welcoming environment",
+      gradient: "from-blue-400 to-cyan-500"
     }
   ];
 
   const pricingPlans = [
     {
-      name: "Monthly Premium",
-      price: "$40",
+      name: "Monthly Bee",
+      price: "$29",
       period: "/month",
       popular: false,
+      emoji: "🐝",
       features: [
-        "Unlimited matches & swipes",
-        "AI conversation starters",
-        "Cultural events access",
-        "Premium messaging features",
-        "Profile verification badge",
-        "Advanced cultural filters",
-        "Read receipts",
-        "Priority customer support"
+        "Unlimited connections & matches",
+        "Join cultural groups & events",
+        "AI conversation helpers",
+        "Photo & video sharing",
+        "Cultural compatibility insights",
+        "Event planning tools",
+        "Community support",
+        "Mobile app access"
       ]
     },
     {
-      name: "Yearly Premium",
-      price: "$400",
+      name: "Yearly Hive",
+      price: "$290",
       period: "/year",
-      savings: "Save $80 per year",
+      savings: "Save $58 per year",
       popular: true,
+      emoji: "🏠",
       features: [
-        "All monthly features included",
-        "Priority matching algorithm",
-        "Exclusive VIP cultural events",
-        "Immigration resources & guides",
-        "Weekly cultural newsletter",
-        "Dedicated relationship coach",
-        "Monthly profile boost",
-        "Video chat capabilities",
-        "Cultural compatibility reports"
+        "Everything in Monthly Bee",
+        "Priority event access",
+        "Exclusive cultural experiences",
+        "Personal culture coach",
+        "Advanced matching algorithm",
+        "Video chat & calls",
+        "Travel buddy connections",
+        "VIP community access",
+        "Cultural newsletter & guides"
       ]
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+      <nav className="glass-morphism sticky top-0 z-50 border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Heart className="h-8 w-8 text-blue-600" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                CulturalConnect
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold animate-pulse-glow">
+                  🐝
+                </div>
+              </div>
+              <span className="text-3xl font-bold h1bee-text-gradient">
+                H1bee
               </span>
+              <Badge className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1">
+                Beta
+              </Badge>
             </div>
             <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/auth')}
-                className="text-gray-600 hover:text-blue-600"
+                className="text-gray-600 hover:text-yellow-600 hover:bg-yellow-50"
               >
                 Sign In
               </Button>
               <Button 
                 onClick={() => navigate('/auth')}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                Get Started
+                Join H1bee
+                <Sparkles className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -99,150 +113,207 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <Badge className="mb-6 bg-blue-100 text-blue-800 hover:bg-blue-100">
-            Premium Cross-Cultural Dating Platform
-          </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Connect Across
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {" "}Cultures
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-yellow-200/20 via-pink-200/20 to-purple-200/20 animate-gradient"></div>
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          <div className="flex justify-center mb-6">
+            <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 text-sm font-medium">
+              🌍 Where Cultures Connect & Hearts Meet
+            </Badge>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+            Find Your
+            <span className="h1bee-text-gradient animate-gradient block">
+              Cultural Match
             </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-            The professional dating platform connecting Americans with non-Americans for 
-            meaningful relationships, cultural exchange, and long-term partnerships.
+          <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
+            H1bee brings together people from different cultures for meaningful connections, friendships, and love. 
+            <span className="font-semibold text-yellow-600"> Meet People | Join Groups | Plan Events</span>
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button 
               size="lg" 
               onClick={() => navigate('/auth')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg"
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
             >
-              Start Your Journey
-              <Zap className="ml-2 h-5 w-5" />
+              Start Connecting Today
+              <Heart className="ml-2 h-5 w-5" />
             </Button>
             <Button 
               size="lg" 
               variant="outline"
-              className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg"
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              className="border-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 px-8 py-4 text-lg font-semibold"
+              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              View Pricing
+              See How It Works
             </Button>
           </div>
           
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 max-w-2xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-2">10,000+</div>
-              <div className="text-gray-600">Active Members</div>
+          {/* Floating Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 max-w-3xl mx-auto">
+            <div className="text-center animate-float">
+              <div className="text-4xl font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent mb-2">15,000+</div>
+              <div className="text-gray-600 font-medium">Cultural Connections</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">50+</div>
-              <div className="text-gray-600">Countries Represented</div>
+            <div className="text-center animate-float" style={{ animationDelay: '0.5s' }}>
+              <div className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent mb-2">80+</div>
+              <div className="text-gray-600 font-medium">Countries United</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-2">2,500+</div>
-              <div className="text-gray-600">Successful Matches</div>
+            <div className="text-center animate-float" style={{ animationDelay: '1s' }}>
+              <div className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-indigo-500 bg-clip-text text-transparent mb-2">500+</div>
+              <div className="text-gray-600 font-medium">Events Monthly</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/60 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Why Choose CulturalConnect?
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Your Cultural Journey Starts Here
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              More than dating - it's about building bridges between cultures and creating lasting connections.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              More than just dating - H1bee is your gateway to meaningful friendships, cultural adventures, and lasting love connections.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader>
-                  <div className="mx-auto mb-4 p-3 bg-gray-50 rounded-full w-fit">
-                    {feature.icon}
-                  </div>
-                  <CardTitle className="text-xl mb-2">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 leading-relaxed">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
+              <Card key={index} className={`text-center border-0 shadow-lg hover:shadow-2xl card-hover bg-gradient-to-br ${feature.gradient} p-1`}>
+                <div className="bg-white rounded-lg p-6 h-full">
+                  <CardHeader className="pb-4">
+                    <div className="mx-auto mb-4 p-4 bg-gray-50 rounded-full w-fit">
+                      {feature.icon}
+                    </div>
+                    <CardTitle className="text-xl mb-2 font-bold">{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-gray-600 leading-relaxed">
+                      {feature.description}
+                    </CardDescription>
+                  </CardContent>
+                </div>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-50 to-orange-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <Badge className="mb-4 bg-green-100 text-green-800">
-              Premium Membership Plans
-            </Badge>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Invest in Meaningful Connections
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              How H1bee Works
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Choose the plan that fits your cultural journey. All plans include our core features for serious cross-cultural relationships.
+              Your journey to meaningful cross-cultural connections in three simple steps.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              {
+                step: "1",
+                emoji: "👋",
+                title: "Create Your Vibe",
+                description: "Share your cultural story, interests, and what kind of connections you're looking for. Be authentic - that's what makes H1bee special!"
+              },
+              {
+                step: "2", 
+                emoji: "🎯",
+                title: "Discover Your People",
+                description: "Our smart matching connects you with like-minded people based on cultural interests, values, and relationship goals."
+              },
+              {
+                step: "3",
+                emoji: "🎉",
+                title: "Connect & Celebrate",
+                description: "Start conversations, join groups, attend events, and build meaningful relationships that celebrate cultural diversity."
+              }
+            ].map((item, index) => (
+              <div key={index} className="text-center">
+                <div className="relative mb-8">
+                  <div className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto shadow-lg">
+                    {item.step}
+                  </div>
+                  <div className="absolute -top-2 -right-2 text-3xl animate-bounce">
+                    {item.emoji}
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">{item.title}</h3>
+                <p className="text-gray-600 leading-relaxed text-lg">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-green-100 text-green-800 text-sm px-3 py-1">
+              💝 Simple & Fair Pricing
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Join the H1bee Community
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Choose the plan that fits your cultural journey. All plans include our core features for meaningful connections.
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {pricingPlans.map((plan, index) => (
-              <Card key={index} className={`relative overflow-hidden ${
+              <Card key={index} className={`relative overflow-hidden card-hover ${
                 plan.popular 
-                  ? 'border-2 border-blue-500 shadow-2xl scale-105' 
-                  : 'border border-gray-200 shadow-lg'
+                  ? 'border-2 border-yellow-400 shadow-2xl scale-105 bg-gradient-to-br from-yellow-50 to-orange-50' 
+                  : 'border border-gray-200 shadow-lg bg-white'
               }`}>
                 {plan.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-2 text-sm font-semibold">
+                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-center py-3 text-sm font-bold">
                     <Star className="inline h-4 w-4 mr-1" />
-                    MOST POPULAR
+                    MOST POPULAR CHOICE
                   </div>
                 )}
                 
-                <CardHeader className={`text-center ${plan.popular ? 'pt-12' : 'pt-6'}`}>
+                <CardHeader className={`text-center ${plan.popular ? 'pt-16' : 'pt-8'}`}>
+                  <div className="text-4xl mb-2">{plan.emoji}</div>
                   <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <div className="flex items-baseline justify-center mt-4">
+                  <div className="flex items-baseline justify-center mt-6">
                     <span className="text-5xl font-bold text-gray-900">{plan.price}</span>
                     <span className="text-gray-600 ml-2 text-lg">{plan.period}</span>
                   </div>
                   {plan.savings && (
-                    <Badge className="mt-2 bg-green-100 text-green-800">
+                    <Badge className="mt-3 bg-green-100 text-green-800 font-semibold">
                       {plan.savings}
                     </Badge>
                   )}
                 </CardHeader>
                 
-                <CardContent className="px-6 pb-8">
-                  <ul className="space-y-3 mb-8">
+                <CardContent className="px-8 pb-8">
+                  <ul className="space-y-4 mb-8">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
-                        <Check className="h-5 w-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-700">{feature}</span>
+                        <Check className="h-5 w-5 text-green-600 mr-3 mt-1 flex-shrink-0" />
+                        <span className="text-gray-700 leading-relaxed">{feature}</span>
                       </li>
                     ))}
                   </ul>
                   
                   <Button 
-                    className={`w-full py-3 text-lg font-semibold ${
+                    className={`w-full py-4 text-lg font-bold transition-all duration-300 ${
                       plan.popular 
-                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700' 
-                        : 'bg-blue-600 hover:bg-blue-700'
+                        ? 'bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-lg hover:shadow-xl' 
+                        : 'bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600'
                     }`}
                     onClick={() => navigate('/auth')}
                   >
-                    Choose {plan.name}
+                    Choose {plan.name} {plan.emoji}
                   </Button>
                 </CardContent>
               </Card>
@@ -250,10 +321,10 @@ export default function Landing() {
           </div>
           
           <div className="text-center mt-12">
-            <p className="text-gray-600 mb-4">
-              All plans include a 7-day free trial. Cancel anytime.
+            <p className="text-gray-600 mb-4 text-lg">
+              All plans include a 7-day free trial. Cancel anytime, no questions asked! 💛
             </p>
-            <div className="flex justify-center items-center space-x-6 text-sm text-gray-500">
+            <div className="flex justify-center items-center space-x-8 text-sm text-gray-500">
               <div className="flex items-center">
                 <Shield className="h-4 w-4 mr-1" />
                 Secure Payment
@@ -264,81 +335,37 @@ export default function Landing() {
               </div>
               <div className="flex items-center">
                 <Heart className="h-4 w-4 mr-1" />
-                Money-Back Guarantee
+                Love Guarantee
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              How CulturalConnect Works
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Your journey to meaningful cross-cultural connections in four simple steps.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              {
-                step: "1",
-                title: "Sign Up & Verify",
-                description: "Create your account and complete identity verification for a safe, premium experience."
-              },
-              {
-                step: "2", 
-                title: "Cultural Profile",
-                description: "Share your cultural journey, interests, and what you're looking for in cross-cultural relationships."
-              },
-              {
-                step: "3",
-                title: "Smart Matching", 
-                description: "Our AI matches you based on cultural compatibility, shared interests, and relationship goals."
-              },
-              {
-                step: "4",
-                title: "Connect & Grow",
-                description: "Start conversations with AI assistance and join cultural events to deepen connections."
-              }
-            ].map((item, index) => (
-              <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-                  {item.step}
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Connect Across Cultures?
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="text-6xl mb-6">🌍💕</div>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Ready to Find Your Cultural Match?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of members who have found meaningful relationships and cultural connections through our premium platform.
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+            Join thousands of members who have found meaningful relationships, friendships, and cultural connections through H1bee.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
               onClick={() => navigate('/auth')}
-              className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
+              className="bg-white text-orange-600 hover:bg-gray-100 px-8 py-4 text-lg font-bold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
             >
-              Start Your Cultural Journey Today
+              Start Your Cultural Journey
+              <Sparkles className="ml-2 h-5 w-5" />
             </Button>
             <Button 
               size="lg" 
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 text-lg font-semibold"
+              className="border-2 border-white text-white hover:bg-white hover:text-orange-600 px-8 py-4 text-lg font-bold"
               onClick={() => navigate('/auth')}
             >
               Try Free for 7 Days
@@ -348,52 +375,54 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="bg-gray-900 text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Heart className="h-6 w-6 text-blue-400" />
-                <span className="text-xl font-bold">CulturalConnect</span>
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-lg">
+                  🐝
+                </div>
+                <span className="text-2xl font-bold">H1bee</span>
               </div>
-              <p className="text-gray-400 mb-4">
-                Building bridges between cultures, one connection at a time.
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                Building bridges between cultures, one meaningful connection at a time. 🌍💛
               </p>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Platform</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">How It Works</a></li>
-                <li><a href="#" className="hover:text-white">Success Stories</a></li>
-                <li><a href="#" className="hover:text-white">Cultural Events</a></li>
-                <li><a href="#" className="hover:text-white">Safety</a></li>
+              <h3 className="font-bold mb-4 text-lg">Connect</h3>
+              <ul className="space-y-3 text-gray-400">
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">How It Works</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Success Stories</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Cultural Events</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Community Groups</a></li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white">Immigration Resources</a></li>
-                <li><a href="#" className="hover:text-white">Cultural Guide</a></li>
+              <h3 className="font-bold mb-4 text-lg">Support</h3>
+              <ul className="space-y-3 text-gray-400">
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Safety Guide</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Cultural Tips</a></li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white">Cookie Policy</a></li>
-                <li><a href="#" className="hover:text-white">Community Guidelines</a></li>
+              <h3 className="font-bold mb-4 text-lg">Legal</h3>
+              <ul className="space-y-3 text-gray-400">
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
+                <li><a href="#" className="hover:text-yellow-400 transition-colors">Community Guidelines</a></li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 CulturalConnect. All rights reserved. Connecting hearts across cultures.</p>
+            <p>&copy; 2024 H1bee. All rights reserved. Connecting hearts across cultures with love. 🐝💕</p>
           </div>
         </div>
       </footer>
