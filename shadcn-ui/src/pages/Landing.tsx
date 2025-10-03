@@ -4,9 +4,10 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, Globe, MessageSquare, Calendar, Shield, Zap, Check, Star, Users, Sparkles, MapPin, Coffee } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { useEffect } from "react";
+
 export default function Landing() {
   const navigate = useNavigate();
-
   const features = [
     {
       icon: <Users className="h-8 w-8 text-yellow-500" />,
@@ -121,16 +122,37 @@ export default function Landing() {
               🌍 Where Cultures Connect & Hearts Meet
             </Badge>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-            Find Your
-            <span className="h1bee-text-gradient animate-gradient block">
-              Cultural Match
-            </span>
-          </h1>
-          <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
-            H1bee brings together people from different cultures for meaningful connections, friendships, and love. 
-            <span className="font-semibold text-yellow-600"> Meet People | Join Groups | Plan Events</span>
-          </p>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
+            <div className="flex-1 flex flex-col items-center md:items-center">
+              <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight text-center md:text-center">
+                Find Your
+                <span className="h1bee-text-gradient animate-gradient block">
+                  Cultural Match
+                </span>
+              </h1>
+              <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed text-center md:text-center">
+                H1bee brings together people from different cultures for meaningful connections, friendships, and love.
+                <span className="font-semibold text-yellow-600"> Meet People | Join Groups | Plan Events</span>
+              </p>
+            </div>
+            <div className="flex-1 flex justify-center items-center relative">
+             <div className="w-full max-w-xs h-[500px] relative overflow-hidden rounded-2xl shadow-2xl border-4 border-white/60">
+               <img
+                 id="hero-image"
+                 src="https://plus.unsplash.com/premium_photo-1731355246208-4eb2b30cbd93?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                 alt="Cultural Match"
+                 className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
+                 style={{
+                   boxShadow: "0 8px 32px 0 rgba(255, 193, 7, 0.15), 0 1.5px 8px 0 rgba(233, 30, 99, 0.10)",
+                   background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,193,7,0.12) 100%)"
+                 }}
+               />
+               <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+                 background: "radial-gradient(circle at 60% 40%, rgba(255,193,7,0.18) 0%, rgba(233,30,99,0.10) 70%, transparent 100%)"
+               }}></div>
+             </div>
+            </div>
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button 
@@ -429,3 +451,7 @@ export default function Landing() {
     </div>
   );
 }
+
+
+
+
