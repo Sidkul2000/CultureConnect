@@ -132,7 +132,8 @@ export default function Landing() {
               </h1>
               <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed text-center md:text-center">
                 H1bee brings together people from different cultures for meaningful connections, friendships, and love.
-                <span className="font-semibold text-yellow-600"> Meet People | Join Groups | Plan Events</span>
+                <br />
+                <span className="font-semibold text-yellow-600">Meet People | Join Groups | Plan Events</span>
               </p>
             </div>
             <div className="flex-1 flex justify-center items-center relative">
