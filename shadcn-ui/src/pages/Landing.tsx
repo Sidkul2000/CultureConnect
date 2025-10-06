@@ -141,7 +141,7 @@ export default function Landing() {
              <div className="w-full max-w-5xl aspect-[1/1.4 bg-white relative overflow-hidden rounded-2xl shadow-2xl border-4 border-white/60">
                <img
                  id="hero-image"
-                 src="/images/h1bee-1.jpeg"
+                 src="/images/h1bee-1.jpg"
                  alt="Cultural Match"
                  className="w-full h-full object-cover transition-all duration-700"
                  style={{
@@ -282,7 +282,7 @@ export default function Landing() {
           <div className="flex justify-center mb-12">
             <div className="w-full max-w-3xl aspect-[1.2/1] bg-white relative overflow-hidden rounded-2xl shadow-xl border-4 border-white/60">
               <img
-                src="/images/h1bee-2.jpeg"
+                src="/images/h1bee-2.jpg"
                 alt="Cultural Fun"
                 className="w-full h-full object-cover transition-all duration-700"
                 style={{
