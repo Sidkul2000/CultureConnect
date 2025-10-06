@@ -127,7 +127,7 @@ export default function Landing() {
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight text-center md:text-center">
                Meet & Date Exceptional People
                <span className="h1bee-text-gradient animate-gradient block">
-                 Accross the World
+                 Across the World
                 </span>
                 <div className="text-xl text-gray-700">Where you are</div>
               </h1>
