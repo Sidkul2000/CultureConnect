@@ -140,15 +140,15 @@ export default function Landing() {
             <div className="flex-1 flex justify-center items-center relative">
              <div className="w-full max-w-5xl aspect-[1/1.4 bg-white relative overflow-hidden rounded-2xl shadow-2xl border-4 border-white/60">
                <img
-                 id="hero-image"
-                 src="/images/h1bee-1.jpg"
-                 alt="Cultural Match"
-                 className="w-full h-full object-cover transition-all duration-700"
-                 style={{
-                   boxShadow: "0 8px 32px 0 rgba(255, 193, 7, 0.15), 0 1.5px 8px 0 rgba(233, 30, 99, 0.10)",
-                   background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,193,7,0.12) 100%)"
-                 }}
-               />
+                id="hero-image"
+                src="https://imgur.com/QIq3JBs.jpeg"
+                alt="Cultural Match"
+                className="w-full h-full object-cover transition-all duration-700"
+                style={{
+                  boxShadow: "0 8px 32px 0 rgba(255, 193, 7, 0.15), 0 1.5px 8px 0 rgba(233, 30, 99, 0.10)",
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,193,7,0.12) 100%)"
+                }}
+              />
                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
                  background: "radial-gradient(circle at 60% 40%, rgba(255,193,7,0.10) 0%, rgba(233,30,99,0.08) 70%, transparent 100%)"
                }}></div>
@@ -282,7 +282,7 @@ export default function Landing() {
           <div className="flex justify-center mb-12">
             <div className="w-full max-w-3xl aspect-[1.2/1] bg-white relative overflow-hidden rounded-2xl shadow-xl border-4 border-white/60">
               <img
-                src="/images/h1bee-2.jpg"
+                src="https://imgur.com/WUT7X1O.jpeg"
                 alt="Cultural Fun"
                 className="w-full h-full object-cover transition-all duration-700"
                 style={{
