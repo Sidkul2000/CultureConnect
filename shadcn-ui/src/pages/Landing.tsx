@@ -12,7 +12,7 @@ export default function Landing() {
     {
       icon: <Users className="h-8 w-8 text-yellow-500" />,
       title: "Meet People",
-      description: "Connect with amazing individuals from different cultures and backgrounds for meaningful relationships",
+      description: "Connect with exceptional individuals from different cultures and backgrounds for meaningful relationships",
       gradient: "from-yellow-400 to-orange-500"
     },
     {
@@ -118,38 +118,39 @@ export default function Landing() {
         <div className="absolute inset-0 bg-gradient-to-r from-yellow-200/20 via-pink-200/20 to-purple-200/20 animate-gradient"></div>
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <div className="flex justify-center mb-6">
-            <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 text-sm font-medium">
+            {/* <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 text-sm font-medium">
               🌍 Where Cultures Connect & Hearts Meet
-            </Badge>
+            </Badge> */}
           </div>
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
             <div className="flex-1 flex flex-col items-center md:items-center">
-              <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight text-center md:text-center">
-                Find Your
-                <span className="h1bee-text-gradient animate-gradient block">
-                  Cultural Match
+              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight text-center md:text-center">
+               Meet & Date Exceptional People
+               <span className="h1bee-text-gradient animate-gradient block">
+                 Accross the World
                 </span>
+                <div className="text-xl text-gray-700">Where you are</div>
               </h1>
               <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed text-center md:text-center">
-                H1bee brings together people from different cultures for meaningful connections, friendships, and love.
+                H1bee is a world of opportunities, in your backyard. Jump in. Reach out. Meet someone exceptional.
                 <br />
                 <span className="font-semibold text-yellow-600">Meet People | Join Groups | Plan Events</span>
               </p>
             </div>
             <div className="flex-1 flex justify-center items-center relative">
-             <div className="w-full max-w-xs h-[500px] relative overflow-hidden rounded-2xl shadow-2xl border-4 border-white/60">
+             <div className="w-full max-w-5xl aspect-[1/1.4 bg-white relative overflow-hidden rounded-2xl shadow-2xl border-4 border-white/60">
                <img
                  id="hero-image"
-                 src="https://plus.unsplash.com/premium_photo-1731355246208-4eb2b30cbd93?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                 src="/images/h1bee-1.jpeg"
                  alt="Cultural Match"
-                 className="absolute inset-0 w-full h-full object-cover transition-all duration-700"
+                 className="w-full h-full object-cover transition-all duration-700"
                  style={{
                    boxShadow: "0 8px 32px 0 rgba(255, 193, 7, 0.15), 0 1.5px 8px 0 rgba(233, 30, 99, 0.10)",
                    background: "linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,193,7,0.12) 100%)"
                  }}
                />
                <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
-                 background: "radial-gradient(circle at 60% 40%, rgba(255,193,7,0.18) 0%, rgba(233,30,99,0.10) 70%, transparent 100%)"
+                 background: "radial-gradient(circle at 60% 40%, rgba(255,193,7,0.10) 0%, rgba(233,30,99,0.08) 70%, transparent 100%)"
                }}></div>
              </div>
             </div>
@@ -278,6 +279,22 @@ export default function Landing() {
       {/* Pricing Section */}
       <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center mb-12">
+            <div className="w-full max-w-3xl aspect-[1.2/1] bg-white relative overflow-hidden rounded-2xl shadow-xl border-4 border-white/60">
+              <img
+                src="/images/h1bee-2.jpeg"
+                alt="Cultural Fun"
+                className="w-full h-full object-cover transition-all duration-700"
+                style={{
+                  boxShadow: "0 8px 32px 0 rgba(233, 30, 99, 0.12), 0 1.5px 8px 0 rgba(255, 193, 7, 0.10)",
+                  background: "linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(233,30,99,0.10) 100%)"
+                }}
+              />
+              <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+                background: "radial-gradient(circle at 60% 40%, rgba(233,30,99,0.10) 0%, rgba(255,193,7,0.08) 70%, transparent 100%)"
+              }}></div>
+            </div>
+          </div>
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-green-100 text-green-800 text-sm px-3 py-1">
               💝 Simple & Fair Pricing

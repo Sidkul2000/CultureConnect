@@ -60,7 +60,7 @@ export default function Dashboard() {
         'https://images.unsplash.com/photo-1494790108755-2616b332c1c2?w=400&h=600&fit=crop&crop=face',
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop&crop=face'
       ],
-      bio: 'Marketing professional who loves salsa dancing and exploring new cultures. Looking for genuine connections and someone to share adventures with! 💃🌎 I believe life is about creating beautiful memories with amazing people. Whether it\'s trying a new restaurant, dancing until sunrise, or having deep conversations under the stars, I\'m always up for an adventure.',
+      bio: 'Marketing professional who loves salsa dancing and exploring new cultures. Looking for genuine connections and someone to share adventures with! 💃🌎 I believe life is about creating beautiful memories with exceptional people. Whether it\'s trying a new restaurant, dancing until sunrise, or having deep conversations under the stars, I\'m always up for an adventure.',
       culturalJourney: 'Growing up in São Paulo taught me that the best conversations happen over good food and music. I love sharing Brazilian culture and learning about others! My family moved to Miami when I was 15, and it opened my eyes to how beautiful cultural fusion can be. I speak Portuguese at home, English at work, and Spanish with my neighbors - it\'s like living in three worlds at once.',
       interests: ['Salsa Dancing', 'Food Adventures', 'Beach Volleyball', 'Live Music', 'Travel', 'Photography', 'Capoeira', 'Cooking', 'Wine Tasting', 'Art Galleries'],
       languages: ['Portuguese', 'English', 'Spanish'],
@@ -193,7 +193,7 @@ export default function Dashboard() {
         }, 1000);
       }
     } else {
-      toast.info("No worries, there are plenty more amazing people to meet! 😊");
+      toast.info("No worries, there are plenty more exceptional people to meet! 😊");
     }
     
     setTimeout(() => {
@@ -336,7 +336,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="max-w-sm mx-auto py-8 px-4 relative">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Discover Amazing People</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Discover Exceptional People</h1>
           <p className="text-gray-600">Swipe right to like, left to pass 💛</p>
         </div>
 

@@ -621,7 +621,7 @@ export default function Auth() {
                 <div className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
                   <h4 className="font-bold text-gray-900 mb-2">What's next?</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
-                    <li>🐝 Discover amazing people from different cultures</li>
+                    <li>🐝 Discover exceptional people from different cultures</li>
                     <li>💬 Start meaningful conversations</li>
                     <li>🎉 Join cultural events and meetups</li>
                     <li>🌍 Learn and share cultural experiences</li>
