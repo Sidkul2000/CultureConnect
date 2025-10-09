@@ -211,29 +211,72 @@ export default function Dashboard() {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || isScrolling) return;
-    
+
     const deltaX = e.clientX - dragStart.x;
     const deltaY = e.clientY - dragStart.y;
-    
+
     // If vertical movement is greater than horizontal, it's likely scrolling
     if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10) {
       setIsScrolling(true);
       setIsDragging(false);
       return;
     }
-    
+
     setDragOffset({ x: deltaX, y: deltaY });
   };
 
   const handleMouseUp = () => {
     if (!isDragging) return;
-    
+
     setIsDragging(false);
-    
+
     if (Math.abs(dragOffset.x) > 100 && !isScrolling) {
       handleSwipe(dragOffset.x > 0 ? 'right' : 'left');
     }
-    
+
+    setDragOffset({ x: 0, y: 0 });
+    setTimeout(() => setIsScrolling(false), 100);
+  };
+
+  // Touch event handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isScrolling) return;
+    const touch = e.touches[0];
+    setIsDragging(true);
+    setDragStart({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || isScrolling) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - dragStart.x;
+    const deltaY = touch.clientY - dragStart.y;
+
+    // If vertical movement is greater than horizontal, it's likely scrolling
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10) {
+      setIsScrolling(true);
+      setIsDragging(false);
+      return;
+    }
+
+    // Prevent default to avoid scrolling while swiping horizontally
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      e.preventDefault();
+    }
+
+    setDragOffset({ x: deltaX, y: deltaY });
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+
+    setIsDragging(false);
+
+    if (Math.abs(dragOffset.x) > 100 && !isScrolling) {
+      handleSwipe(dragOffset.x > 0 ? 'right' : 'left');
+    }
+
     setDragOffset({ x: 0, y: 0 });
     setTimeout(() => setIsScrolling(false), 100);
   };
@@ -331,6 +374,72 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        {showMenu && (
+          <div className="md:hidden bg-white border-t border-gray-200">
+            <div className="px-4 py-2 space-y-1">
+              <Button
+                variant="ghost"
+                onClick={() => { navigate('/dashboard'); setShowMenu(false); }}
+                className="w-full justify-start text-yellow-600 bg-yellow-50 font-semibold"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Meet People
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => { navigate('/feed'); setShowMenu(false); }}
+                className="w-full justify-start"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Feed
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => { navigate('/messages'); setShowMenu(false); }}
+                className="w-full justify-start"
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Messages
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => { navigate('/events'); setShowMenu(false); }}
+                className="w-full justify-start"
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Events
+              </Button>
+              <div className="border-t border-gray-200 pt-2 mt-2">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start hover:bg-yellow-50"
+                  onClick={() => setShowMenu(false)}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  {currentUser.profile?.firstName || 'Profile'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start hover:bg-yellow-50"
+                  onClick={() => setShowMenu(false)}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start hover:bg-red-50"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Main Content */}
@@ -351,28 +460,32 @@ export default function Dashboard() {
             const opacity = 1;
             
             return (
-              <Card 
+              <Card
                 key={`${profile.id}-${profile.stackIndex}`}
                 ref={isTopCard ? cardRef : undefined}
                 className={`absolute inset-0 bg-white border-0 overflow-hidden ${
                   isTopCard ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
                 } card-3d-tilt ${
-                  isTopCard && swipeDirection === 'left' ? 'animate-swipe-left' : 
+                  isTopCard && swipeDirection === 'left' ? 'animate-swipe-left' :
                   isTopCard && swipeDirection === 'right' ? 'animate-swipe-right' : ''
                 }`}
                 style={{
                   zIndex,
                   opacity,
-                  transform: isTopCard && isDragging 
+                  transform: isTopCard && isDragging
                     ? `translateX(${dragOffset.x}px) translateY(${dragOffset.y * 0.1 + translateY}px) rotate(${dragOffset.x * 0.1}deg) scale(${scale})`
                     : `translateY(${translateY}px) scale(${scale})`,
                   transition: isDragging && isTopCard ? 'none' : 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: `0 ${10 + index * 5}px ${30 + index * 10}px rgba(0, 0, 0, ${0.2 - index * 0.05})`
+                  boxShadow: `0 ${10 + index * 5}px ${30 + index * 10}px rgba(0, 0, 0, ${0.2 - index * 0.05})`,
+                  touchAction: 'pan-y'
                 }}
                 onMouseDown={isTopCard ? handleMouseDown : undefined}
                 onMouseMove={isTopCard ? handleMouseMove : undefined}
                 onMouseUp={isTopCard ? handleMouseUp : undefined}
                 onMouseLeave={isTopCard ? handleMouseUp : undefined}
+                onTouchStart={isTopCard ? handleTouchStart : undefined}
+                onTouchMove={isTopCard ? handleTouchMove : undefined}
+                onTouchEnd={isTopCard ? handleTouchEnd : undefined}
               >
                 {/* Swipe Indicators - only on top card */}
                 {isTopCard && (
