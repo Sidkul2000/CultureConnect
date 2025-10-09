@@ -42,12 +42,9 @@ export default function Dashboard() {
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [touchStartTarget, setTouchStartTarget] = useState<EventTarget | null>(null);
 
   // Enhanced mock profiles with more realistic data
   const mockProfiles: Profile[] = [
@@ -174,18 +171,18 @@ export default function Dashboard() {
   const getCurrentProfile = () => profiles[currentIndex];
 
   const handleSwipe = (direction: 'left' | 'right') => {
-    if (isAnimating || !getCurrentProfile() || isScrolling) return;
-    
+    if (isAnimating || !getCurrentProfile()) return;
+
     setIsAnimating(true);
     setSwipeDirection(direction);
-    
+
     const currentProfile = getCurrentProfile();
-    
+
     if (direction === 'right') {
       toast.success(`You liked ${currentProfile.name}! 💛`, {
         description: "We'll let them know you're interested!"
       });
-      
+
       // Simulate match (70% chance for more positive experience)
       if (Math.random() > 0.3) {
         setTimeout(() => {
@@ -197,7 +194,7 @@ export default function Dashboard() {
     } else {
       toast.info("No worries, there are plenty more exceptional people to meet! 😊");
     }
-    
+
     setTimeout(() => {
       setCurrentIndex(prev => (prev + 1) % profiles.length);
       setSwipeDirection(null);
@@ -205,97 +202,55 @@ export default function Dashboard() {
     }, 500);
   };
 
+  // Simplified mouse handlers for desktop
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (isScrolling) return;
     setIsDragging(true);
     setDragStart({ x: e.clientX, y: e.clientY });
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || isScrolling) return;
-
+    if (!isDragging) return;
     const deltaX = e.clientX - dragStart.x;
     const deltaY = e.clientY - dragStart.y;
-
-    // If vertical movement is greater than horizontal, it's likely scrolling
-    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 10) {
-      setIsScrolling(true);
-      setIsDragging(false);
-      return;
-    }
-
     setDragOffset({ x: deltaX, y: deltaY });
   };
 
   const handleMouseUp = () => {
     if (!isDragging) return;
-
-    setIsDragging(false);
-
-    if (Math.abs(dragOffset.x) > 100 && !isScrolling) {
+    if (Math.abs(dragOffset.x) > 100) {
       handleSwipe(dragOffset.x > 0 ? 'right' : 'left');
     }
-
+    setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
-    setTimeout(() => setIsScrolling(false), 100);
   };
 
-  // Touch event handlers for mobile
+  // Simplified touch handlers for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
-    const target = e.target as HTMLElement;
-    setTouchStartTarget(e.target);
-
-    // Check if touch started inside the scrollable content area
-    const isScrollArea = scrollAreaRef.current?.contains(target);
-
     const touch = e.touches[0];
     setDragStart({ x: touch.clientX, y: touch.clientY });
-
-    // Don't start dragging if touch is in scroll area
-    if (!isScrollArea) {
-      setIsDragging(true);
-    }
+    setIsDragging(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!e.touches[0]) return;
-
+    if (!isDragging || !e.touches[0]) return;
     const touch = e.touches[0];
     const deltaX = touch.clientX - dragStart.x;
     const deltaY = touch.clientY - dragStart.y;
 
-    // Detect if this is horizontal swipe or vertical scroll
-    const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
-
-    // If we haven't determined the gesture yet
-    if (!isDragging && !isScrolling && (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5)) {
-      if (isHorizontalSwipe) {
-        setIsDragging(true);
-        setIsScrolling(false);
-      } else {
-        setIsScrolling(true);
-        setIsDragging(false);
-      }
-    }
-
-    // If swiping horizontally, update drag offset and prevent scroll
-    if (isDragging) {
+    // Only prevent default if moving horizontally
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 5) {
       e.preventDefault();
-      setDragOffset({ x: deltaX, y: deltaY });
     }
+
+    setDragOffset({ x: deltaX, y: deltaY });
   };
 
   const handleTouchEnd = () => {
-    // Complete the swipe if threshold was met
-    if (isDragging && Math.abs(dragOffset.x) > 80) {
+    if (Math.abs(dragOffset.x) > 80) {
       handleSwipe(dragOffset.x > 0 ? 'right' : 'left');
     }
-
-    // Reset all states
     setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
-    setTouchStartTarget(null);
-    setTimeout(() => setIsScrolling(false), 200);
   };
 
   const handleLogout = () => {
@@ -493,8 +448,7 @@ export default function Dashboard() {
                     ? `translateX(${dragOffset.x}px) translateY(${dragOffset.y * 0.1 + translateY}px) rotate(${dragOffset.x * 0.1}deg) scale(${scale})`
                     : `translateY(${translateY}px) scale(${scale})`,
                   transition: isDragging && isTopCard ? 'none' : 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: `0 ${10 + index * 5}px ${30 + index * 10}px rgba(0, 0, 0, ${0.2 - index * 0.05})`,
-                  touchAction: 'none'
+                  boxShadow: `0 ${10 + index * 5}px ${30 + index * 10}px rgba(0, 0, 0, ${0.2 - index * 0.05})`
                 }}
                 onMouseDown={isTopCard ? handleMouseDown : undefined}
                 onMouseMove={isTopCard ? handleMouseMove : undefined}
@@ -503,6 +457,7 @@ export default function Dashboard() {
                 onTouchStart={isTopCard ? handleTouchStart : undefined}
                 onTouchMove={isTopCard ? handleTouchMove : undefined}
                 onTouchEnd={isTopCard ? handleTouchEnd : undefined}
+                onTouchCancel={isTopCard ? handleTouchEnd : undefined}
               >
                 {/* Swipe Indicators - only on top card */}
                 {isTopCard && (
@@ -574,11 +529,8 @@ export default function Dashboard() {
 
                   {/* Scrollable Content Area */}
                   <div
-                    ref={isTopCard ? scrollAreaRef : undefined}
                     className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-yellow-300 scrollbar-track-gray-100 hover:scrollbar-thumb-yellow-400"
-                    style={{ height: 'calc(100% - 16rem)', touchAction: 'pan-y' }}
-                    onScroll={() => setIsScrolling(true)}
-                    onScrollEnd={() => setTimeout(() => setIsScrolling(false), 100)}
+                    style={{ height: 'calc(100% - 16rem)' }}
                   >
                     <CardContent className="p-6 space-y-6">
                       {/* Bio */}
@@ -642,74 +594,38 @@ export default function Dashboard() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-center space-x-8 mt-8" style={{ touchAction: 'auto' }}>
+        <div className="flex justify-center space-x-8 mt-8">
           <Button
             size="lg"
             variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSwipe('left');
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (!isAnimating) handleSwipe('left');
-            }}
+            onClick={() => !isAnimating && handleSwipe('left')}
             disabled={isAnimating}
-            className="rounded-full w-16 h-16 p-0 border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 transition-all duration-300 btn-bounce active:scale-95"
-            style={{ pointerEvents: 'auto' }}
+            className="rounded-full w-16 h-16 p-0 border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 transition-all duration-300 btn-bounce active:scale-90"
           >
             <X className="h-8 w-8 text-gray-600 hover:text-red-500" />
           </Button>
 
           <Button
             size="lg"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate('/messages');
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (!isAnimating) navigate('/messages');
-            }}
+            onClick={() => !isAnimating && navigate('/messages')}
             disabled={isAnimating}
-            className="rounded-full w-16 h-16 p-0 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce active:scale-95"
-            style={{ pointerEvents: 'auto' }}
+            className="rounded-full w-16 h-16 p-0 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce active:scale-90"
           >
             <MessageSquare className="h-8 w-8 text-white" />
           </Button>
 
           <Button
             size="lg"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSwipe('right');
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (!isAnimating) handleSwipe('right');
-            }}
+            onClick={() => !isAnimating && handleSwipe('right')}
             disabled={isAnimating}
-            className="rounded-full w-16 h-16 p-0 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-glow btn-bounce active:scale-95"
-            style={{ pointerEvents: 'auto' }}
+            className="rounded-full w-16 h-16 p-0 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-glow btn-bounce active:scale-90"
           >
             <Heart className="h-8 w-8 text-white" />
           </Button>
 
           <Button
             size="lg"
-            onClick={(e) => {
-              e.stopPropagation();
-              toast.success('Super Like sent! ⚡', {
-                description: `${currentProfile.name} will see you liked them first!`
-              });
-              handleSwipe('right');
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               if (!isAnimating) {
                 toast.success('Super Like sent! ⚡', {
                   description: `${currentProfile.name} will see you liked them first!`
@@ -718,8 +634,7 @@ export default function Dashboard() {
               }
             }}
             disabled={isAnimating}
-            className="rounded-full w-16 h-16 p-0 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce active:scale-95"
-            style={{ pointerEvents: 'auto' }}
+            className="rounded-full w-16 h-16 p-0 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-lg hover:shadow-xl transition-all duration-300 btn-bounce active:scale-90"
           >
             <Star className="h-8 w-8 text-white" />
           </Button>
