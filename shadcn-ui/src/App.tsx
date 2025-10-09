@@ -5,8 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Auth from './pages/Auth';
 import ProfileSetup from './pages/ProfileSetup';
-import Dashboard from './pages/Dashboard';
-import Feed from './pages/Feed';
+import NewDashboard from './pages/NewDashboard';
 import Messages from './pages/Messages';
 import Events from './pages/Events';
 import Subscription from './pages/Subscription';
@@ -24,12 +23,12 @@ const App = () => (
           <Route path="/landing" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/profile-setup" element={<ProfileSetup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/feed" element={<Feed />} />
+          <Route path="/dashboard" element={<NewDashboard />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/events" element={<Events />} />
           <Route path="/subscription" element={<Subscription />} />
-          {/* Redirect old index route to landing */}
+          {/* Redirect old routes */}
+          <Route path="/feed" element={<Navigate to="/dashboard" replace />} />
           <Route path="/index" element={<Navigate to="/" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
