@@ -11,7 +11,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import CreatePostModal from '@/components/CreatePostModal';
-import StoryCarousel from '@/components/StoryCarousel';
 
 interface Profile {
   id: string;
@@ -48,14 +47,6 @@ interface FeedPost {
   userHasLiked?: boolean;
 }
 
-interface Story {
-  id: string;
-  userId: string;
-  userName: string;
-  userPhoto: string;
-  image: string;
-  timestamp: Date;
-}
 
 interface CurrentUser {
   id: string;
@@ -73,6 +64,7 @@ export default function NewDashboard() {
   const [activeTab, setActiveTab] = useState('feed');
   const [showMenu, setShowMenu] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const [isSwipeWidgetExpanded, setIsSwipeWidgetExpanded] = useState(false);
 
   // Swiping state
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -86,7 +78,6 @@ export default function NewDashboard() {
 
   // Feed state
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>([]);
-  const [stories, setStories] = useState<Story[]>([]);
 
   // Mock data
   const mockProfiles: Profile[] = [
@@ -144,25 +135,6 @@ export default function NewDashboard() {
       vibe: 'Calm & Innovative',
       distance: '3 miles away',
       isOnline: true
-    },
-  ];
-
-  const mockStories: Story[] = [
-    {
-      id: '1',
-      userId: '1',
-      userName: 'Sofia',
-      userPhoto: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face',
-      image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=700&fit=crop',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2)
-    },
-    {
-      id: '2',
-      userId: '2',
-      userName: 'Priya',
-      userPhoto: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&h=100&fit=crop&crop=face',
-      image: 'https://images.unsplash.com/photo-1603228254119-e6a4d095dc59?w=400&h=700&fit=crop',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5)
     },
   ];
 
@@ -244,7 +216,6 @@ export default function NewDashboard() {
 
     setProfiles(mockProfiles);
     setFeedPosts(mockFeedPosts);
-    setStories(mockStories);
   }, [navigate]);
 
   // Swiping functions
@@ -486,13 +457,209 @@ export default function NewDashboard() {
 
           {/* Feed Tab */}
           <TabsContent value="feed" className="mt-0 px-4 py-6 space-y-6">
-            {/* Story Carousel */}
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <StoryCarousel
-                stories={stories}
-                onAddStory={() => toast.info('Story creation coming soon! 📸')}
-              />
-            </div>
+            {/* Expandable Swipe Widget */}
+            <Card className="overflow-hidden shadow-sm hover:shadow-lg transition-all">
+              {/* Collapsed Header - Click to Expand */}
+              <div
+                className="bg-gradient-to-r from-pink-50 via-rose-50 to-orange-50 cursor-pointer hover:from-pink-100 hover:via-rose-100 hover:to-orange-100 transition-all p-4 border-b border-pink-100"
+                onClick={() => setIsSwipeWidgetExpanded(!isSwipeWidgetExpanded)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gradient-to-r from-pink-400 to-rose-500 rounded-full flex items-center justify-center text-white shadow-md">
+                      <Heart className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 text-lg">Discover People</p>
+                      <p className="text-sm text-gray-600 flex items-center gap-1">
+                        <span className="text-pink-500 font-semibold">{profiles.length}</span> profiles waiting
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className={`transform transition-all duration-300 ${isSwipeWidgetExpanded ? 'rotate-180' : ''}`}>
+                      <svg
+                        className="w-6 h-6 text-gray-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Expanded Swipe Area */}
+              {isSwipeWidgetExpanded && (
+                <div className="p-4 bg-white">
+                  <div className="max-w-sm mx-auto">
+                    {/* Mini Card Stack */}
+                    <div className="relative h-[500px] perspective-1000 mb-4">
+                      {visibleProfiles.map((profile, index) => {
+                        const isTopCard = index === 0;
+                        const zIndex = 30 - index;
+                        const translateY = index * 6;
+                        const scale = 1 - index * 0.04;
+
+                        return (
+                          <Card
+                            key={`${profile.id}-${profile.stackIndex}`}
+                            ref={isTopCard ? cardRef : undefined}
+                            className={`absolute inset-0 bg-white border-0 overflow-hidden ${
+                              isTopCard ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
+                            } ${
+                              isTopCard && swipeDirection === 'left' ? 'animate-swipe-left' :
+                              isTopCard && swipeDirection === 'right' ? 'animate-swipe-right' : ''
+                            }`}
+                            style={{
+                              zIndex,
+                              transform: isTopCard && isDragging
+                                ? `translateX(${dragOffset.x}px) translateY(${dragOffset.y * 0.1 + translateY}px) rotate(${dragOffset.x * 0.1}deg) scale(${scale})`
+                                : `translateY(${translateY}px) scale(${scale})`,
+                              transition: isDragging && isTopCard ? 'none' : 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                              boxShadow: `0 ${10 + index * 5}px ${30 + index * 10}px rgba(0, 0, 0, ${0.2 - index * 0.05})`
+                            }}
+                            onMouseDown={isTopCard ? handleMouseDown : undefined}
+                            onMouseMove={isTopCard ? handleMouseMove : undefined}
+                            onMouseUp={isTopCard ? handleMouseUp : undefined}
+                            onMouseLeave={isTopCard ? handleMouseUp : undefined}
+                            onTouchStart={isTopCard ? handleTouchStart : undefined}
+                            onTouchMove={isTopCard ? handleTouchMove : undefined}
+                            onTouchEnd={isTopCard ? handleTouchEnd : undefined}
+                            onTouchCancel={isTopCard ? handleTouchEnd : undefined}
+                          >
+                            {isTopCard && (
+                              <>
+                                <div className={`swipe-indicator like ${dragOffset.x > 50 ? 'visible' : ''}`}>
+                                  💛 LIKE
+                                </div>
+                                <div className={`swipe-indicator pass ${dragOffset.x < -50 ? 'visible' : ''}`}>
+                                  ❌ PASS
+                                </div>
+                              </>
+                            )}
+
+                            <div className="relative h-full overflow-hidden">
+                              <div className="relative h-48 flex-shrink-0">
+                                <img
+                                  src={profile.photos[0]}
+                                  alt={profile.name}
+                                  className="w-full h-full object-cover"
+                                />
+
+                                <div className="absolute top-3 left-3 right-3 flex justify-between">
+                                  <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white font-bold px-2 py-1 text-xs">
+                                    {profile.compatibility}% Match ✨
+                                  </Badge>
+                                  {profile.isOnline && (
+                                    <Badge className="bg-green-500 text-white font-bold px-2 py-1 text-xs animate-pulse">
+                                      🟢 Online
+                                    </Badge>
+                                  )}
+                                </div>
+
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                                  <h2 className="text-xl font-bold mb-1">
+                                    {profile.name}, {profile.age}
+                                  </h2>
+                                  <div className="flex items-center mb-1">
+                                    <Globe className="h-3 w-3 mr-2 text-yellow-300" />
+                                    <span className="font-medium text-xs">{profile.nationality}</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <MapPin className="h-3 w-3 mr-2 text-pink-300" />
+                                    <span className="text-xs">{profile.distance}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ height: 'calc(100% - 12rem)' }}>
+                                <div>
+                                  <h3 className="font-bold text-gray-900 mb-1 text-sm">About Me</h3>
+                                  <p className="text-gray-700 leading-relaxed text-sm">{profile.bio}</p>
+                                </div>
+
+                                <div className="p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
+                                  <h3 className="font-bold text-gray-900 mb-1 text-sm">Cultural Journey</h3>
+                                  <p className="text-gray-700 text-xs">{profile.culturalJourney}</p>
+                                </div>
+
+                                <div>
+                                  <h3 className="font-bold text-gray-900 mb-1 text-sm">Languages</h3>
+                                  <div className="flex flex-wrap gap-1">
+                                    {profile.languages.map((lang, i) => (
+                                      <Badge key={i} className="bg-blue-100 text-blue-800 text-xs">
+                                        {lang}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <h3 className="font-bold text-gray-900 mb-1 text-sm">Interests</h3>
+                                  <div className="flex flex-wrap gap-1">
+                                    {profile.interests.map((interest, i) => (
+                                      <Badge key={i} className="bg-purple-100 text-purple-800 text-xs">
+                                        {interest}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex justify-center space-x-4">
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        onClick={() => !isAnimating && handleSwipe('left')}
+                        disabled={isAnimating}
+                        className="rounded-full w-14 h-14 p-0 border-2 hover:border-red-400 hover:bg-red-50 active:scale-90"
+                      >
+                        <X className="h-6 w-6 text-gray-600" />
+                      </Button>
+
+                      <Button
+                        size="lg"
+                        onClick={() => !isAnimating && handleSwipe('right')}
+                        disabled={isAnimating}
+                        className="rounded-full w-14 h-14 p-0 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg active:scale-90"
+                      >
+                        <Heart className="h-6 w-6 text-white" />
+                      </Button>
+
+                      <Button
+                        size="lg"
+                        onClick={() => {
+                          if (!isAnimating) {
+                            toast.success('Super Like sent! ⚡');
+                            handleSwipe('right');
+                          }
+                        }}
+                        disabled={isAnimating}
+                        className="rounded-full w-14 h-14 p-0 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 shadow-lg active:scale-90"
+                      >
+                        <Star className="h-6 w-6 text-white" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
 
             {/* Create Post Button */}
             <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200 cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowCreatePost(true)}>
