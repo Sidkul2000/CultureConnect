@@ -1,4 +1,4 @@
-import Pusher from 'pusher';
+import Pusher = require('pusher');
 
 let pusherInstance: Pusher | null = null;
 
