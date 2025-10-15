@@ -1,0 +1,272 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+}
+
+enum Orientation {
+  MEN
+  WOMEN
+  EVERYONE
+}
+
+enum UserType {
+  AMERICAN
+  NON_AMERICAN
+}
+
+enum RelationshipGoal {
+  RELATIONSHIP
+  CULTURAL_EXCHANGE
+  BOTH
+}
+
+enum SwipeAction {
+  LIKE
+  PASS
+  SUPER_LIKE
+}
+
+enum PostType {
+  EVENT
+  NEWS
+  USER_POST
+  STORY
+}
+
+model User {
+  id                String            @id @default(cuid())
+  email             String            @unique
+  password          String
+  firstName         String
+  lastName          String
+  birthday          DateTime
+  gender            Gender
+  orientation       Orientation
+  userType          UserType
+  nationality       String?
+  location          String
+  relationshipGoal  RelationshipGoal
+  bio               String
+  culturalJourney   String?
+  height            String?
+  education         String?
+  occupation        String?
+
+  // Arrays
+  interests         String[]
+  languages         String[]
+  photos            String[]
+
+  // Preferences
+  minAge            Int               @default(18)
+  maxAge            Int               @default(100)
+  maxDistance       Int               @default(50)
+  interestedInEvents Boolean          @default(true)
+  interestedInImmigrationNews Boolean @default(false)
+  interestedInCulturalTrivia Boolean  @default(true)
+
+  // Metadata
+  profileCompleted  Boolean           @default(false)
+  isOnline          Boolean           @default(false)
+  lastSeen          DateTime          @default(now())
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  // Relations
+  sentSwipes        Swipe[]           @relation("SwipeFrom")
+  receivedSwipes    Swipe[]           @relation("SwipeTo")
+  matches           Match[]           @relation("UserMatches")
+  matchedWith       Match[]           @relation("MatchedWithUser")
+  sentMessages      Message[]         @relation("MessageSender")
+  conversations     ConversationParticipant[]
+  posts             Post[]
+  stories           Story[]
+  likes             Like[]
+  comments          Comment[]
+  eventAttendees    EventAttendee[]
+
+  @@index([location])
+  @@index([gender])
+  @@index([orientation])
+  @@index([userType])
+}
+
+model Swipe {
+  id          String      @id @default(cuid())
+  fromUserId  String
+  toUserId    String
+  action      SwipeAction
+  createdAt   DateTime    @default(now())
+
+  fromUser    User        @relation("SwipeFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser      User        @relation("SwipeTo", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@unique([fromUserId, toUserId])
+  @@index([fromUserId])
+  @@index([toUserId])
+}
+
+model Match {
+  id              String        @id @default(cuid())
+  user1Id         String
+  user2Id         String
+  createdAt       DateTime      @default(now())
+
+  user1           User          @relation("UserMatches", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2           User          @relation("MatchedWithUser", fields: [user2Id], references: [id], onDelete: Cascade)
+  conversation    Conversation?
+
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
+}
+
+model Conversation {
+  id          String                      @id @default(cuid())
+  matchId     String                      @unique
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @updatedAt
+
+  match       Match                       @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  messages    Message[]
+  participants ConversationParticipant[]
+}
+
+model ConversationParticipant {
+  id              String        @id @default(cuid())
+  conversationId  String
+  userId          String
+  unreadCount     Int           @default(0)
+  lastReadAt      DateTime      @default(now())
+
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id              String        @id @default(cuid())
+  conversationId  String
+  senderId        String
+  content         String
+  createdAt       DateTime      @default(now())
+
+  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender          User          @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+enum Visibility {
+  GLOBAL
+  CONNECTIONS
+}
+
+model Post {
+  id              String        @id @default(cuid())
+  type            PostType
+  title           String
+  content         String
+  image           String?
+  authorId        String
+  location        String?
+  culturalTheme   String?
+  visibility      Visibility    @default(GLOBAL)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  author          User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes           Like[]
+  comments        Comment[]
+  eventDetails    EventDetails?
+
+  @@index([authorId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([visibility])
+}
+
+model EventDetails {
+  id              String          @id @default(cuid())
+  postId          String          @unique
+  date            DateTime
+  time            String
+  address         String?
+  price           Float           @default(0)
+  maxAttendees    Int             @default(50)
+
+  post            Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  attendees       EventAttendee[]
+}
+
+model EventAttendee {
+  id              String        @id @default(cuid())
+  eventId         String
+  userId          String
+  status          String        @default("pending") // pending, confirmed, declined
+  createdAt       DateTime      @default(now())
+
+  event           EventDetails  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([userId])
+}
+
+model Story {
+  id          String      @id @default(cuid())
+  userId      String
+  image       String
+  caption     String?
+  createdAt   DateTime    @default(now())
+  expiresAt   DateTime    // Stories expire after 24 hours
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Like {
+  id          String      @id @default(cuid())
+  postId      String
+  userId      String
+  createdAt   DateTime    @default(now())
+
+  post        Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+model Comment {
+  id          String      @id @default(cuid())
+  postId      String
+  userId      String
+  content     String
+  createdAt   DateTime    @default(now())
+
+  post        Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([userId])
+}
