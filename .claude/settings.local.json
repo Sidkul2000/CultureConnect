@@ -18,7 +18,8 @@
       "Bash(npx prisma studio:*)",
       "Bash(npx tsx:*)",
       "Bash(cat:*)",
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
