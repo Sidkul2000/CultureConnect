@@ -2,7 +2,7 @@ import express from 'express';
 import { authenticateToken, AuthRequest } from '../middleware/auth.middleware';
 import { prisma } from '../db/prisma';
 import { Prisma } from '@prisma/client';
-import { getIO } from '../services/socket.service';
+import { triggerMatchNotification } from '../services/pusher.service';
 
 const router = express.Router();
 
@@ -270,10 +270,8 @@ router.post('/swipe', authenticateToken, async (req: AuthRequest, res) => {
         isMatch = true;
         matchId = match.id;
 
-        // Send real-time notification to both users
+        // Send real-time notification to both users via Pusher
         try {
-          const io = getIO();
-
           // Get both users' data for the notification
           const [currentUserData, matchedUserData] = await Promise.all([
             prisma.user.findUnique({
@@ -287,20 +285,19 @@ router.post('/swipe', authenticateToken, async (req: AuthRequest, res) => {
           ]);
 
           if (currentUserData && matchedUserData) {
-            // Notify the other user about the match
-            io.to(toUserId).emit('new_match', {
+            // Notify the other user about the match using Pusher
+            await triggerMatchNotification(toUserId, {
               matchId: match.id,
               user: {
-                id: currentUserData.id,
                 name: `${currentUserData.firstName} ${currentUserData.lastName}`,
                 photo: currentUserData.photos[0] || '',
                 bio: currentUserData.bio || ''
               }
             });
           }
-        } catch (socketError) {
-          console.error('Socket notification error:', socketError);
-          // Don't fail the request if socket notification fails
+        } catch (pusherError) {
+          console.error('Pusher notification error:', pusherError);
+          // Don't fail the request if Pusher notification fails
         }
       }
     }

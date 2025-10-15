@@ -135,11 +135,15 @@ export default function NewDashboard() {
     loadFeed();
   }, [navigate]);
 
-  // Listen for real-time match notifications
+  // Listen for real-time match notifications via Pusher
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !currentUser) return;
 
-    const handleNewMatch = (data: { matchId: string; user: { name: string; photo: string; bio: string } }) => {
+    // Subscribe to user's private channel
+    const channel = socket.subscribe(`private-user-${currentUser.id}`);
+
+    // Bind to new_match event
+    channel.bind('new_match', (data: { matchId: string; user: { name: string; photo: string; bio: string } }) => {
       console.log('Received match notification:', data);
 
       // Show match modal for the other user
@@ -149,14 +153,14 @@ export default function NewDashboard() {
         bio: data.user.bio
       });
       setShowMatchModal(true);
-    };
-
-    socket.on('new_match', handleNewMatch);
+    });
 
     return () => {
-      socket.off('new_match', handleNewMatch);
+      // Unbind event and unsubscribe from channel
+      channel.unbind('new_match');
+      socket.unsubscribe(`private-user-${currentUser.id}`);
     };
-  }, [socket]);
+  }, [socket, currentUser]);
 
   // Swiping functions
   const getCurrentProfile = () => profiles[currentIndex];

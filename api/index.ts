@@ -7,12 +7,21 @@ import messageRoutes from '../backend/src/routes/message.routes';
 import postRoutes from '../backend/src/routes/post.routes';
 import storyRoutes from '../backend/src/routes/story.routes';
 import uploadRoutes from '../backend/src/routes/upload.routes';
+import pusherRoutes from '../backend/src/routes/pusher.routes';
+import { initializePusher } from '../backend/src/services/pusher.service';
 
 const app = express();
 
+// Initialize Pusher
+initializePusher();
+
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'https://h1bee.us',
+    'https://*.h1bee.us'
+  ].filter(Boolean),
   credentials: true
 }));
 app.use(express.json());
@@ -35,6 +44,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/pusher', pusherRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
