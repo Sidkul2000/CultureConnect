@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -24,7 +24,7 @@ const signupValidation = [
 ];
 
 // Sign up
-router.post('/signup', signupValidation, async (req, res) => {
+router.post('/signup', signupValidation, async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -69,10 +69,13 @@ router.post('/signup', signupValidation, async (req, res) => {
     });
 
     // Generate JWT
+    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret';
+    const expiresIn = (process.env.JWT_EXPIRES_IN || '7d') as string;
+    // @ts-expect-error - JWT typing issue with expiresIn
     const token = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET!,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      jwtSecret,
+      { expiresIn }
     );
 
     res.status(201).json({ user, token });
@@ -86,7 +89,7 @@ router.post('/signup', signupValidation, async (req, res) => {
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
   body('password').notEmpty()
-], async (req, res) => {
+], async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -117,10 +120,13 @@ router.post('/login', [
     });
 
     // Generate JWT
+    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret';
+    const expiresIn = (process.env.JWT_EXPIRES_IN || '7d') as string;
+    // @ts-expect-error - JWT typing issue with expiresIn
     const token = jwt.sign(
       { userId: user.id },
-      process.env.JWT_SECRET!,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+      jwtSecret,
+      { expiresIn }
     );
 
     const userResponse = {
