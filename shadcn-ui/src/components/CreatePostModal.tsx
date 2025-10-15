@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Image, MapPin, DollarSign, Users, Sparkles, X } from 'lucide-react';
+import { Calendar, Image, MapPin, DollarSign, Users, Sparkles, Globe, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface CreatePostModalProps {
@@ -25,6 +25,7 @@ export default function CreatePostModal({ isOpen, onClose, onCreatePost }: Creat
   const [maxAttendees, setMaxAttendees] = useState('');
   const [culturalTheme, setCulturalTheme] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [visibility, setVisibility] = useState<'GLOBAL' | 'CONNECTIONS'>('GLOBAL');
 
   const resetForm = () => {
     setTitle('');
@@ -36,6 +37,7 @@ export default function CreatePostModal({ isOpen, onClose, onCreatePost }: Creat
     setMaxAttendees('');
     setCulturalTheme('');
     setImageUrl('');
+    setVisibility('GLOBAL');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -52,6 +54,7 @@ export default function CreatePostModal({ isOpen, onClose, onCreatePost }: Creat
       title,
       content,
       image: imageUrl,
+      visibility,
       timestamp: new Date(),
       author: 'You',
       ...(postType === 'event' && {
@@ -96,6 +99,30 @@ export default function CreatePostModal({ isOpen, onClose, onCreatePost }: Creat
                 <SelectItem value="story">📖 Story / Update</SelectItem>
                 <SelectItem value="event">🎉 Cultural Event</SelectItem>
                 <SelectItem value="news">📰 News / Article</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Visibility Selection */}
+          <div className="space-y-2">
+            <Label>Who can see this?</Label>
+            <Select value={visibility} onValueChange={(value: any) => setVisibility(value)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="GLOBAL">
+                  <div className="flex items-center">
+                    <Globe className="h-4 w-4 mr-2" />
+                    Everyone (Global)
+                  </div>
+                </SelectItem>
+                <SelectItem value="CONNECTIONS">
+                  <div className="flex items-center">
+                    <Lock className="h-4 w-4 mr-2" />
+                    My Connections Only
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

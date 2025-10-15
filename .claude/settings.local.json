@@ -1,9 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)",
-      "Bash(rm:*)",
-      "Bash(git add:*)"
+      "Bash(npm run db:push:*)",
+      "Bash(npm run seed)",
+      "Bash(npm run db:seed:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell:*)",
+      "Bash(npm run dev)",
+      "Bash(curl -X POST http://localhost:3001/api/auth/login -H \"Content-Type: application/json\" -d \"{\"\"email\"\":\"\"john@example.com\"\",\"\"password\"\":\"\"password123\"\"}\")",
+      "Bash(curl:*)",
+      "Bash(npm install:*)",
+      "Bash(npm ls:*)",
+      "Bash(pnpm add:*)",
+      "Bash(timeout:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx prisma studio:*)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [],
     "ask": []

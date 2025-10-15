@@ -9,6 +9,7 @@ import NewDashboard from './pages/NewDashboard';
 import Messages from './pages/Messages';
 import Events from './pages/Events';
 import Subscription from './pages/Subscription';
+import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -27,6 +28,8 @@ const App = () => (
           <Route path="/messages" element={<Messages />} />
           <Route path="/events" element={<Events />} />
           <Route path="/subscription" element={<Subscription />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<Profile />} />
           {/* Redirect old routes */}
           <Route path="/feed" element={<Navigate to="/dashboard" replace />} />
           <Route path="/index" element={<Navigate to="/" replace />} />

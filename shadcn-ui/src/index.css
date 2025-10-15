@@ -442,3 +442,35 @@ button, a, [role="button"] {
 .perspective-1000 {
   perspective: 1000px;
 }
+
+/* Match Modal Animations */
+@keyframes float-heart {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bounce-once {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float-heart {
+  animation: float-heart 3s ease-in infinite;
+}
+
+.animate-bounce-once {
+  animation: bounce-once 1s ease-out;
+}

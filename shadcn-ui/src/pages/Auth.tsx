@@ -125,42 +125,128 @@ export default function Auth() {
     }
   };
 
-  const handleSignUp = () => {
-    const userData = {
-      ...signUpData,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      profileCompleted: true
-    };
-    
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-    toast.success('Welcome to H1bee! 🐝✨', {
-      description: "Your profile is ready! Let's find your cultural match!"
-    });
-    navigate('/dashboard');
-  };
+  const handleSignUp = async () => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-  const handleLogin = () => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      if (user.email === loginData.email && user.password === loginData.password) {
-        toast.success('Welcome back to H1bee! 🐝💛');
-        navigate('/dashboard');
-      } else {
-        toast.error('Hmm, those credentials don\'t look right 🤔');
+      // Transform data to match backend enum expectations
+      const transformedData = {
+        email: signUpData.email,
+        password: signUpData.password,
+        firstName: signUpData.firstName,
+        lastName: signUpData.lastName,
+        birthday: signUpData.birthday,
+        gender: signUpData.gender.toUpperCase(),
+        orientation: signUpData.orientation.toUpperCase(),
+        userType: signUpData.userType.toUpperCase(),
+        nationality: signUpData.nationality || null,
+        location: signUpData.location,
+        relationshipGoal: signUpData.relationshipGoal.toUpperCase(),
+        interests: signUpData.interests,
+        photos: signUpData.photos,
+        bio: signUpData.bio,
+        languages: [] // Default empty array for languages
+      };
+
+      console.log('Sending signup data:', transformedData);
+
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(transformedData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('Signup validation errors:', data);
+        const errorMsg = data.errors
+          ? data.errors.map((e: any) => `${e.path || e.param}: ${e.msg}`).join(', ')
+          : data.error;
+        toast.error(errorMsg || 'Signup failed. Please check your information.');
+        return;
       }
-    } else {
-      toast.error('No account found. Join the H1bee community first! 🐝');
+
+      // Save user data and token
+      localStorage.setItem('currentUser', JSON.stringify({
+        ...data.user,
+        token: data.token
+      }));
+
+      toast.success('Welcome to H1bee! 🐝✨', {
+        description: "Your profile is ready! Let's find your cultural match!"
+      });
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast.error('Connection error. Please make sure the backend is running.');
     }
   };
 
-  const addPhoto = () => {
-    const photoUrl = `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=400&h=600&fit=crop&crop=face`;
-    setSignUpData(prev => ({
-      ...prev,
-      photos: [...prev.photos, photoUrl]
-    }));
+  const handleLogin = async () => {
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || 'Login failed. Please check your credentials.');
+        return;
+      }
+
+      // Save user data and token
+      localStorage.setItem('currentUser', JSON.stringify({
+        ...data.user,
+        token: data.token
+      }));
+
+      toast.success('Welcome back to H1bee! 🐝💛');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Connection error. Please make sure the backend is running.');
+    }
+  };
+
+  const addPhoto = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    // Convert to base64 for preview and storage
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setSignUpData(prev => ({
+        ...prev,
+        photos: [...prev.photos, base64String]
+      }));
+      toast.success('Photo added successfully!');
+    };
+    reader.onerror = () => {
+      toast.error('Failed to read image file');
+    };
+    reader.readAsDataURL(file);
   };
 
   const removePhoto = (index: number) => {
@@ -172,7 +258,7 @@ export default function Auth() {
 
   if (!isSignUp) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50 flex items-center justify-center p-4">      
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <Button
@@ -226,8 +312,8 @@ export default function Auth() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-3 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Welcome Back to H1bee! 💛
@@ -235,8 +321,8 @@ export default function Auth() {
               </form>
 
               <div className="text-center mt-6">
-                <Button 
-                  variant="link" 
+                <Button
+                  variant="link"
                   onClick={() => setIsSignUp(true)}
                   className="text-yellow-600 hover:text-yellow-700"
                 >
@@ -253,7 +339,7 @@ export default function Auth() {
   const progress = (currentStep / SIGNUP_STEPS.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50 flex items-center justify-center p-4">        
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-6">
@@ -267,7 +353,7 @@ export default function Auth() {
               Back
             </Button>
           )}
-          
+
           <div className="flex items-center justify-center space-x-3 mb-4">
             <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold animate-pulse-glow">
               🐝
@@ -282,8 +368,8 @@ export default function Auth() {
               <span>{Math.round(progress)}%</span>
             </div>
             <Progress value={progress} className="h-2 bg-gray-200">
-              <div 
-                className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-500 ease-out rounded-full"
+              <div
+                className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-500 ease-out rounded-full"      
                 style={{ width: `${progress}%` }}
               />
             </Progress>
@@ -402,7 +488,7 @@ export default function Auth() {
                 <div className="space-y-4">
                   <div className="space-y-3">
                     <Label className="text-gray-700 font-medium">I identify as</Label>
-                    <Select onValueChange={(value) => updateSignUpData('gender', value)}>
+                    <Select value={signUpData.gender} onValueChange={(value) => updateSignUpData('gender', value)}>
                       <SelectTrigger className="border-gray-200 focus:border-yellow-400">
                         <SelectValue placeholder="Select your gender" />
                       </SelectTrigger>
@@ -416,7 +502,7 @@ export default function Auth() {
 
                   <div className="space-y-3">
                     <Label className="text-gray-700 font-medium">I'm interested in</Label>
-                    <Select onValueChange={(value) => updateSignUpData('orientation', value)}>
+                    <Select value={signUpData.orientation} onValueChange={(value) => updateSignUpData('orientation', value)}>
                       <SelectTrigger className="border-gray-200 focus:border-yellow-400">
                         <SelectValue placeholder="Select your preference" />
                       </SelectTrigger>
@@ -428,7 +514,7 @@ export default function Auth() {
                     </Select>
                   </div>
 
-                  <div className="space-y-3 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+                  <div className="space-y-3 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">       
                     <Label className="text-gray-700 font-medium">I am</Label>
                     <RadioGroup
                       value={signUpData.userType}
@@ -460,7 +546,7 @@ export default function Auth() {
                 {signUpData.userType === 'non_american' && (
                   <div className="space-y-2">
                     <Label className="text-gray-700 font-medium">Your nationality</Label>
-                    <Select onValueChange={(value) => updateSignUpData('nationality', value)}>
+                    <Select value={signUpData.nationality} onValueChange={(value) => updateSignUpData('nationality', value)}>
                       <SelectTrigger className="border-gray-200 focus:border-yellow-400">
                         <SelectValue placeholder="Select your nationality" />
                       </SelectTrigger>
@@ -491,7 +577,7 @@ export default function Auth() {
 
                 <div className="space-y-2">
                   <Label className="text-gray-700 font-medium">Looking for</Label>
-                  <Select onValueChange={(value) => updateSignUpData('relationshipGoal', value)}>
+                  <Select value={signUpData.relationshipGoal} onValueChange={(value) => updateSignUpData('relationshipGoal', value)}>    
                     <SelectTrigger className="border-gray-200 focus:border-yellow-400">
                       <SelectValue placeholder="What are you looking for?" />
                     </SelectTrigger>
@@ -532,18 +618,20 @@ export default function Auth() {
                       </Button>
                     </div>
                   ))}
-                  
+
                   {signUpData.photos.length < 6 && (
-                    <Button
-                      variant="outline"
-                      onClick={addPhoto}
-                      className="h-32 border-2 border-dashed border-yellow-300 hover:border-yellow-400 hover:bg-yellow-50"
-                    >
+                    <label className="h-32 border-2 border-dashed border-yellow-300 hover:border-yellow-400 hover:bg-yellow-50 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={addPhoto}
+                        className="hidden"
+                      />
                       <div className="text-center">
                         <Camera className="h-8 w-8 text-yellow-500 mx-auto mb-2" />
                         <span className="text-sm text-gray-600">Add Photo</span>
                       </div>
-                    </Button>
+                    </label>
                   )}
                 </div>
               </div>
@@ -565,7 +653,7 @@ export default function Auth() {
                       variant={signUpData.interests.includes(interest) ? "default" : "outline"}
                       className={`cursor-pointer transition-all duration-200 ${
                         signUpData.interests.includes(interest)
-                          ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600'
+                          ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white hover:from-yellow-500 hover:to-orange-600'        
                           : 'border-yellow-300 text-gray-700 hover:bg-yellow-50'
                       }`}
                       onClick={() => toggleInterest(interest)}
@@ -597,7 +685,7 @@ export default function Auth() {
                   <Label htmlFor="bio" className="text-gray-700 font-medium">About you</Label>
                   <textarea
                     id="bio"
-                    placeholder="Share something interesting about yourself, your cultural background, or what you're looking for..."
+                    placeholder="Share something interesting about yourself, your cultural background, or what you're looking for..."    
                     value={signUpData.bio}
                     onChange={(e) => updateSignUpData('bio', e.target.value)}
                     className="w-full h-32 p-3 border border-gray-200 rounded-lg focus:border-yellow-400 focus:ring-yellow-400 resize-none"
@@ -615,9 +703,9 @@ export default function Auth() {
                 <div className="text-6xl mb-4">🎉</div>
                 <h3 className="text-2xl font-bold text-gray-900">You're all set!</h3>
                 <p className="text-gray-600 text-lg">
-                  Welcome to H1bee! Your profile looks amazing and you're ready to start connecting with people from different cultures.
+                  Welcome to H1bee! Your profile looks amazing and you're ready to start connecting with people from different cultures. 
                 </p>
-                
+
                 <div className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
                   <h4 className="font-bold text-gray-900 mb-2">What's next?</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
@@ -682,8 +770,8 @@ export default function Auth() {
             {/* Login Link */}
             {currentStep === 1 && (
               <div className="text-center mt-6">
-                <Button 
-                  variant="link" 
+                <Button
+                  variant="link"
                   onClick={() => setIsSignUp(false)}
                   className="text-yellow-600 hover:text-yellow-700"
                 >
