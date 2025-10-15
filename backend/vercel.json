@@ -1,19 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "npm run build && npx prisma generate",
-  "builds": [
+  "buildCommand": "npx prisma generate",
+  "rewrites": [
     {
-      "src": "src/index.ts",
-      "use": "@vercel/node"
+      "source": "/(.*)",
+      "destination": "/api"
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "src/index.ts"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
