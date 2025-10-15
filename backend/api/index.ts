@@ -18,7 +18,16 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Health check and root endpoint (before other routes to avoid middleware conflicts)
+app.get('/api/health', (req: Request, res: Response) => {
+  res.json({ status: 'ok', message: 'H1bee API is running on Vercel!' });
+});
+
+app.get('/', (req: Request, res: Response) => {
+  res.json({ status: 'ok', message: 'H1bee API - Use /api/* endpoints' });
+});
+
+// Protected Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/matches', matchRoutes);
@@ -26,16 +35,6 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/upload', uploadRoutes);
-
-// Health check
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', message: 'H1bee API is running on Vercel!' });
-});
-
-// Root endpoint
-app.get('/', (req: Request, res: Response) => {
-  res.json({ status: 'ok', message: 'H1bee API - Use /api/* endpoints' });
-});
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
